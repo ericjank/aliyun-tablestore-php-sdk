@@ -8,6 +8,7 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Guzzle\HandlerStackFactory;
 use Hyperf\Utils\Coroutine;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Client;
 
 class OTSHandlers
 {
@@ -49,28 +50,23 @@ class OTSHandlers
         $this->errorHandler = new ErrorHandler();
         $this->httpHeaderHandler = new HttpHeaderHandler();
         $this->httpHandler = new HttpHandler();
-        
-        $clientFactory      = ApplicationContext::getContainer()->get(ClientFactory::class);
-        $this->httpClient   = $clientFactory->create([
-            'handler'   => $this->getDefaultHandler(),
-            'base_uri'  => $config->getEndPoint(),
-            'timeout'   => $config->connectionTimeout,
+        $this->httpClient = make(Client::class, [
+            'config' => [
+                'handler'   => $this->getDefaultHandler(),
+                'base_uri'  => $config->getEndPoint(),
+                'timeout'   => $config->connectionTimeout,
+            ]
         ]);
-
     }
     
     protected function getDefaultHandler()
     {
-        $id = (int) Coroutine::inCoroutine();
-
-        if (isset(self::$stacks[$id]) && self::$stacks[$id] instanceof HandlerStack) {
-            return self::$stacks[$id];
-        }
-        $factory = ApplicationContext::getContainer()->get(HandlerStackFactory::class);
-        return self::$stacks[$id] = $factory->create([
-            'min_connections'    => 100,
-            'max_connections'    => 120,
-            'wait_timeout'       => 3.0 ,
+        $factory = new HandlerStackFactory();
+        return $factory->create([
+            'min_connections' => config('tablestore.min_connections', 1),
+            'max_connections' => config('tablestore.max_connections', 10),
+            'wait_timeout'    => config('tablestore.wait_timeout', 10),
+            'max_idle_time'   => config('tablestore.max_idle_time', 60),
         ]);
     }
 
