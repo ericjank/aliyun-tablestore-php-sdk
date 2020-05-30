@@ -63,10 +63,10 @@ class OTSHandlers
     {
         $factory = new HandlerStackFactory();
         return $factory->create([
-            'min_connections' => config('tablestore.'.$name.'.min_connections', 1),
-            'max_connections' => config('tablestore.'.$name.'.max_connections', 10),
-            'wait_timeout'    => config('tablestore.'.$name.'.wait_timeout', 10),
-            'max_idle_time'   => config('tablestore.'.$name.'.max_idle_time', 60),
+            'min_connections' => config('tablestore.'.$name.'.pool.min_connections', 1),
+            'max_connections' => config('tablestore.'.$name.'.pool.max_connections', 10),
+            'wait_timeout'    => config('tablestore.'.$name.'.pool.wait_timeout', 10),
+            'max_idle_time'   => config('tablestore.'.$name.'.pool.max_idle_time', 60),
         ]);
     }
 
