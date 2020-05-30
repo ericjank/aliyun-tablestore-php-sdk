@@ -23,19 +23,23 @@ Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
   
    memory_limit = 512M
 
-4. 下载SDK并解压到本地。
+4. 执行安装命令
+```
+composer require ericjank/aliyun-tablestore-php-sdk:dev-master
+```
 
-5. 安装依赖。在解压后的目录中执行命令： 
+5. 发布配置文件 
+```
+   php bin/hyperf.php vendor:publish ericjank/aliyun-tablestore-php-sdk
+```
+这条命令会生成 config/autoload/tablestore.php 配置文件
 
-   php tools/composer.phar install --no-dev
+6. 根据自己的实际情况配置 .env
 
-6. 生成 autoload。 在解压后的目录中执行命令：
-
-   php tools/composer.phar dumpautoload --no-dev
-
-   这条命令会生成 vendor/autoload.php 文件。
-
-7. 在你的PHP代码文件中引用（require）上一个步骤中生成的 vendor/autoload.php 文件。
+7. 实例化客户端
+```
+$client = new \Aliyun\OTS\OTSClient() ;
+```
 
 # 编程文档
 
