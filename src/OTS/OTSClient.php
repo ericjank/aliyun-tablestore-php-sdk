@@ -70,7 +70,7 @@ class OTSClient
             'DebugLogHandler'   => config('tablestore.'.$name.'.debug_log_handler', null),
         ];
         $this->config = new \Aliyun\OTS\OTSClientConfig($args);
-        $this->handlers = new \Aliyun\OTS\Handlers\OTSHandlers($this->config);
+        $this->handlers = new \Aliyun\OTS\Handlers\OTSHandlers($this->config, $name);
     }
 
     /** 返回 OTSClientConfig 对象 
