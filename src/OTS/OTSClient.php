@@ -3,6 +3,7 @@
 namespace Aliyun\OTS;
 
 use Aliyun\OTS\Handlers;
+use Aliyun\OTS\Retry\DefaultRetryPolicy;
 
 /**
  * OTSClient.php 是 Aliyun OTS SDK for PHP 的入口。更多关于OTS的信息，请参考阿里云官网OTS文档 https://docs.aliyun.com/?/pub/ots#/pub/ots
@@ -30,8 +31,44 @@ class OTSClient
      * @example "examples/ErrorHandling.php" 20 错误处理样例
      * @example "examples/NewClient2.php" 20 所有可选参数
      */
-    public function __construct(array $args) 
+    public function __construct(string $name = 'default') 
     {
+        $args = [
+            'EndPoint'          => config('tablestore.'.$name.'.end_point') ,
+            'AccessKeyID'       => config('tablestore.'.$name.'.access_key_id') ,
+            'AccessKeySecret'   => config('tablestore.'.$name.'.access_key_secret') ,
+            'InstanceName'      => config('tablestore.'.$name.'.instance_name') ,
+            // 以下是可选参数
+            'StsToken'       => config('tablestore.'.$name.'.sts_token', null),   # 临时访问的token
+            'ConnectionTimeout' => config('tablestore.'.$name.'.connection_timeout', 2.0),    # 与OTS建立连接的最大延时，默认 2.0秒
+            'SocketTimeout'     => config('tablestore.'.$name.'.socket_timeout', 2.0) ,    # 每次请求响应最大延时，默认2.0秒
+            // 重试策略，默认为 DefaultRetryPolicy
+            // 如果要关闭重试，可以设置为： 'RetryPolicy' => new NoRetryPolicy(),
+            // 如果要自定义重试策略，你可以继承 \Aliyun\OTS\Retry\RetryPolicy 接口构造自己的重试策略
+            'RetryPolicy'       => config('tablestore.'.$name.'.retry_policy', new DefaultRetryPolicy()),
+    
+            // 日志1
+            // Error级别日志处理函数，用来打印OTS服务端返回错误时的日志
+            // 如果设置为null则为关闭log
+            // 'ErrorLogHandler'   => function($message) {
+            //     // 实现你自己的日志处理函数
+            //     print "\033[0;32m--log--\033[0m \033[33;33m".$message."\033[0m\n";
+            // },
+            // // Debug级别日志处理函数，用来打印正常的请求和响应信息
+            // // 如果设置为null则为关闭log
+            // 'DebugLogHandler'   => function($message) {
+            //     // 实现你自己的日志处理函数
+            //     print "\033[0;32m--err--\033[0m \033[33;33m".$message."\033[0m\n";
+            // },
+    
+            // 日志2
+            // Error级别日志处理函数，用来打印OTS服务端返回错误时的日志
+            // 如果设置为null则为关闭log
+            'ErrorLogHandler'   => config('tablestore.'.$name.'.error_handler', null),
+            // Debug级别日志处理函数，用来打印正常的请求和响应信息
+            // 如果设置为null则为关闭log
+            'DebugLogHandler'   => config('tablestore.'.$name.'.debug_log_handler', null),
+        ];
         $this->config = new \Aliyun\OTS\OTSClientConfig($args);
         $this->handlers = new \Aliyun\OTS\Handlers\OTSHandlers($this->config);
     }
