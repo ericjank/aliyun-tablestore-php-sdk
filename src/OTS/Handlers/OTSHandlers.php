@@ -41,7 +41,7 @@ class OTSHandlers
      */
     protected static $stacks = [];
 
-    public function __construct(\Aliyun\OTS\OTSClientConfig $config)
+    public function __construct(\Aliyun\OTS\OTSClientConfig $config, string $name = 'default')
     {
         $this->clientConfig = $config;
         $this->retryHandler = new RetryHandler();
@@ -52,21 +52,21 @@ class OTSHandlers
         $this->httpHandler = new HttpHandler();
         $this->httpClient = make(Client::class, [
             'config' => [
-                'handler'   => $this->getDefaultHandler(),
+                'handler'   => $this->getDefaultHandler($name),
                 'base_uri'  => $config->getEndPoint(),
                 'timeout'   => $config->connectionTimeout,
             ]
         ]);
     }
     
-    protected function getDefaultHandler()
+    protected function getDefaultHandler($name)
     {
         $factory = new HandlerStackFactory();
         return $factory->create([
-            'min_connections' => config('tablestore.min_connections', 1),
-            'max_connections' => config('tablestore.max_connections', 10),
-            'wait_timeout'    => config('tablestore.wait_timeout', 10),
-            'max_idle_time'   => config('tablestore.max_idle_time', 60),
+            'min_connections' => config('tablestore.'.$name.'.min_connections', 1),
+            'max_connections' => config('tablestore.'.$name.'.max_connections', 10),
+            'wait_timeout'    => config('tablestore.'.$name.'.wait_timeout', 10),
+            'max_idle_time'   => config('tablestore.'.$name.'.max_idle_time', 60),
         ]);
     }
 
