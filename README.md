@@ -25,12 +25,12 @@ Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
 
 4. 执行安装命令
 ```
-composer require ericjank/aliyun-tablestore-php-sdk:dev-master
+composer require ericjank/aliyun-tablestore-sdk-php:dev-master
 ```
 
 5. 发布配置文件 
 ```
-   php bin/hyperf.php vendor:publish ericjank/aliyun-tablestore-php-sdk
+   php bin/hyperf.php vendor:publish ericjank/aliyun-tablestore-sdk-php
 ```
 这条命令会生成 config/autoload/tablestore.php 配置文件
 
